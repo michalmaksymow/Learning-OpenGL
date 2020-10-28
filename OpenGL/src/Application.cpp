@@ -7,11 +7,9 @@ int main(void)
 {
     GLFWwindow* window;
 
-    /* Initialize the library */
+    /* Initialize the GLFW library */
     if (!glfwInit())
         return -1;
-
-
 
     /* Create a windowed mode window and its OpenGL context */
     window = glfwCreateWindow(640, 480, "Window", NULL, NULL);
@@ -24,27 +22,49 @@ int main(void)
     /* Make the window's context current */
     glfwMakeContextCurrent(window);
 
-    /* Initialize GLEW library */
+    /* Initialize the GLEW library */
     if (glewInit() != GLEW_OK)
-        std::cout << "Error!" << std::endl;
+        return -1;
 
     /* Print out OpenGL version to the console */
     std::cout << glGetString(GL_VERSION) << std::endl;
 
-    std::cout << sqrt(4.0) << std::endl;
+
+
+    float positions[] = 
+    {
+        -0.5f, -0.5f,
+         0.0f,  0.5f,
+         0.5f, -0.5f
+    };
+
+    /* Hold id of buffer */
+    uint32_t buffer;
+    /* Generate buffer */
+    glGenBuffers(1, &buffer);
+    /* Bind to a buffer with specified id */
+    glBindBuffer(GL_ARRAY_BUFFER, buffer);
+    /* Fill bound buffer with 'positions' data */
+    glBufferData(GL_ARRAY_BUFFER, 6 * sizeof(float), positions, GL_STATIC_DRAW);
+
+    /* Setting up vertex attributes */
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, 0);
+    /* Enabling vertex attributes */
+    glEnableVertexAttribArray(0);
+
+    /* Unbinding buffer */
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+
 
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
     {
         /* Render here */
         glClear(GL_COLOR_BUFFER_BIT);
-
-        glBegin(GL_TRIANGLES);
-        glVertex2f(-0.5f, -0.5f);
-        glVertex2f( 0.0f,  0.5f);
-        glVertex2f( 0.5f, -0.5f);
-        glEnd();
         
+        glDrawArrays(GL_TRIANGLES, 0, 3);
+
         /* Swap front and back buffers */
         glfwSwapBuffers(window);
 
