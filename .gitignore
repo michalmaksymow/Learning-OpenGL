@@ -1,5 +1,7 @@
 Debug/
+Release/
 OpenGl/Debug/
 .vs/
+
 
 *.vcxproj*
