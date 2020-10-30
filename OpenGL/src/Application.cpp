@@ -122,6 +122,10 @@ int main(void)
     if (!glfwInit())
         return -1;
 
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+
     /* Create a windowed mode window and its OpenGL context */
     window = glfwCreateWindow(640, 480, "OpenGL", NULL, NULL);
     if (!window)
@@ -159,6 +163,10 @@ int main(void)
         2, 3, 0
     };
 
+    uint32_t vao;
+    GLCall(glGenVertexArrays(1, &vao));
+    GLCall(glBindVertexArray(vao));
+
     /* Hold id of buffer */
     uint32_t buffer;
     /* Generate buffer */
@@ -166,8 +174,7 @@ int main(void)
     /* Bind to a buffer with specified id */
     glBindBuffer(GL_ARRAY_BUFFER, buffer);
     /* Fill bound buffer with 'positions' data */
-    glBufferData(GL_ARRAY_BUFFER, 6 * 2 * sizeof(float), positions, GL_STATIC_DRAW);
-
+    glBufferData(GL_ARRAY_BUFFER, 4 * 2 * sizeof(float), positions, GL_STATIC_DRAW);
     /* Setting up vertex attributes */
     glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, 0);
     /* Enabling vertex attributes */
@@ -186,11 +193,19 @@ int main(void)
     ASSERT(location != -1);
     GLCall(glUniform4f(location, 0.8f, 0.3f, 0.8f, 1.0f));
 
+    
+    
+    
+
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
     {
         /* Render here */
         glClear(GL_COLOR_BUFFER_BIT);
+
+        GLCall(glUseProgram(shader));
+        GLCall(glBindBuffer(GL_ARRAY_BUFFER, buffer));
+        GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer));
 
         GLCall(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr));
 
