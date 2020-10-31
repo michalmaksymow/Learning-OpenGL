@@ -6,8 +6,6 @@
 #include <sstream>
 #include <unordered_map>
 
-#include "Renderer.h"
-
 
 struct ShaderProgramSource
 {
