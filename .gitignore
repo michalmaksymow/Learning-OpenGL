@@ -5,3 +5,5 @@ OpenGl/Debug/
 
 
 *.vcxproj*
+
+OpenGL/imgui.ini
