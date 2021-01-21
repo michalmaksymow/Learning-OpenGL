@@ -2,8 +2,8 @@ Debug/
 Release/
 OpenGl/Debug/
 .vs/
-
-
+OpenGL-MSVS/
+OpenGL-Linux/build/*
 *.vcxproj*
 
 OpenGL/imgui.ini
