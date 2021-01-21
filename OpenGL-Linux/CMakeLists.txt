@@ -9,5 +9,8 @@ add_executable(application application.cpp)
 add_subdirectory(include/glfw-3.3.2)
 target_link_libraries(application glfw)
 
+add_subdirectory(include/glew-2.1.0/build/cmake)
+target_link_libraries(application glew)
+
 find_package(OpenGL REQUIRED)
 target_link_libraries(application OpenGL::GL)
