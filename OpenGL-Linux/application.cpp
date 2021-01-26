@@ -6,15 +6,13 @@
 #include <cstdint>
 
 int main(void)
-{
-    
-    
+{   
     GLFWwindow *window;
 
     if (!glfwInit())
         return EXIT_FAILURE;
 
-    window = glfwCreateWindow(640, 480, "Hello World", NULL, NULL);
+    window = glfwCreateWindow(1280, 720, "Hello World", NULL, NULL);
     if (!window)
     {
         glfwTerminate();
@@ -23,26 +21,12 @@ int main(void)
 
     glfwMakeContextCurrent(window);
 
-    // Apply 4x antialiasing
-    glfwWindowHint(GLFW_SAMPLES, 4); 
-
-    // Setup OpenGL version (4.5)
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4); 
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
-
-    // Setup for MacOS
-    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); 
-
-    // Disable old OpenGL
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); 
-
     GLenum err = glewInit();
     if (GLEW_OK != err)
     {
         std::cerr << "Error: " << glewGetErrorString(err) << std::endl;
         return EXIT_FAILURE;
     }
-    
 
     std::cout << glGetString(GL_VERSION) << std::endl;
 
@@ -55,9 +39,13 @@ int main(void)
 
     uint32_t bufferID;
     glGenBuffers(1, &bufferID);
-    std::cout << bufferID << std::endl;
     glBindBuffer(GL_ARRAY_BUFFER, bufferID);
     glBufferData(GL_ARRAY_BUFFER, 6*sizeof(float), positions, GL_STATIC_DRAW);
+    
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float)*2, 0);
+
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
     
     while (!glfwWindowShouldClose(window))
     {
