@@ -121,6 +121,8 @@ int main(void)
 
     glfwMakeContextCurrent(window);
 
+    glfwSwapInterval(1);
+
     GLenum err = glewInit();
     if (GLEW_OK != err)
     {
@@ -162,6 +164,10 @@ int main(void)
 
     uint32_t shader = createShader(source.VertexSource, source.FragmentSource);
     GLCall(glUseProgram(shader));
+
+
+    GLCall(int32_t location = glGetUniformLocation(shader, "u_Color"));
+    GLCall(glUniform4f(location, 0.7f, 0.3f, 0.7f, 1.0f));
     
     while (!glfwWindowShouldClose(window))
     {
