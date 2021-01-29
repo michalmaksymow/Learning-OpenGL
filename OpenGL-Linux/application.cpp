@@ -4,9 +4,35 @@
 
 #include <iostream>
 #include <cstdint>
+#include <cassert>
 #include <string>
 #include <sstream>
 #include <fstream>
+
+#define GLCall(x)   GLClearError();\
+                    x;\
+                    assert(GLLogCall(#x, __FILE__, __LINE__));
+
+static void GLClearError()
+{
+    while (glGetError() != GL_NO_ERROR);
+}
+
+static bool GLLogCall(const char* function, const char* file, const int& line)
+{
+    while (GLenum error = glGetError())
+    {
+        std::cout   << "[OpenGL Error] (0x"
+                    << std::hex << error 
+                    << std::dec << ") " 
+                    << function << ' '
+                    << file << ':'
+                    << line
+                    << std::endl;
+        return false;
+    }
+    return true;
+}
 
 struct ShaderProgramSource
 {
@@ -102,7 +128,7 @@ int main(void)
         return EXIT_FAILURE;
     }
 
-    std::cout << glGetString(GL_VERSION) << std::endl;
+    //std::cout << glGetString(GL_VERSION) << std::endl;
 
     float positions[] = 
     {
@@ -119,29 +145,29 @@ int main(void)
     };
 
     uint32_t bufferID;
-    glGenBuffers(1, &bufferID);
-    glBindBuffer(GL_ARRAY_BUFFER, bufferID);
-    glBufferData(GL_ARRAY_BUFFER, 6*2*sizeof(float), positions, GL_STATIC_DRAW);
+    GLCall(glGenBuffers(1, &bufferID));
+    GLCall(glBindBuffer(GL_ARRAY_BUFFER, bufferID));
+    GLCall(glBufferData(GL_ARRAY_BUFFER, 6*2*sizeof(float), positions, GL_STATIC_DRAW));
     
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float)*2, 0);
+    GLCall(glEnableVertexAttribArray(0));
+    GLCall(glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float)*2, 0));
     
 
     uint32_t ibo;
-    glGenBuffers(1, &ibo);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6*sizeof(uint32_t), indicies, GL_STATIC_DRAW);
+    GLCall(glGenBuffers(1, &ibo));
+    GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo));
+    GLCall(glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6*sizeof(uint32_t), indicies, GL_STATIC_DRAW));
 
     ShaderProgramSource source = parseShader("../res/basic.glsl");
 
     uint32_t shader = createShader(source.VertexSource, source.FragmentSource);
-    glUseProgram(shader);
+    GLCall(glUseProgram(shader));
     
     while (!glfwWindowShouldClose(window))
     {
-        glClear(GL_COLOR_BUFFER_BIT);
+        GLCall(glClear(GL_COLOR_BUFFER_BIT));
 
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
+        GLCall(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr));
 
         glfwSwapBuffers(window);
 
