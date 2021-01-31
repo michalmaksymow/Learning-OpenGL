@@ -111,6 +111,10 @@ int main(void)
     if (!glfwInit())
         return EXIT_FAILURE;
 
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+
     window = glfwCreateWindow(1280, 720, "Hello OpenGL", NULL, NULL);
 
     if (!window)
@@ -130,7 +134,7 @@ int main(void)
         return EXIT_FAILURE;
     }
 
-    //std::cout << glGetString(GL_VERSION) << std::endl;
+    std::cout << glGetString(GL_VERSION) << std::endl;
 
     float positions[] = 
     {
@@ -146,15 +150,18 @@ int main(void)
         2, 3, 0
     };
 
+    uint32_t vao;
+    GLCall(glGenVertexArrays(1, &vao));
+    GLCall(glBindVertexArray(vao));
+
     uint32_t bufferID;
     GLCall(glGenBuffers(1, &bufferID));
     GLCall(glBindBuffer(GL_ARRAY_BUFFER, bufferID));
-    GLCall(glBufferData(GL_ARRAY_BUFFER, 6*2*sizeof(float), positions, GL_STATIC_DRAW));
+    GLCall(glBufferData(GL_ARRAY_BUFFER, 4*2*sizeof(float), positions, GL_STATIC_DRAW));
     
     GLCall(glEnableVertexAttribArray(0));
     GLCall(glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float)*2, 0));
     
-
     uint32_t ibo;
     GLCall(glGenBuffers(1, &ibo));
     GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo));
@@ -164,16 +171,22 @@ int main(void)
 
     uint32_t shader = createShader(source.VertexSource, source.FragmentSource);
     GLCall(glUseProgram(shader));
-
+    glBindVertexArray(0);
+    glUseProgram(0);
 
     GLCall(int32_t location = glGetUniformLocation(shader, "u_Color"));
-    GLCall(glUniform4f(location, 0.7f, 0.3f, 0.7f, 1.0f));
     
     while (!glfwWindowShouldClose(window))
     {
         GLCall(glClear(GL_COLOR_BUFFER_BIT));
 
+        glUseProgram(shader);
+        GLCall(glUniform4f(location, 0.7f, 0.3f, 0.7f, 1.0f));
+        glBindVertexArray(vao);
+
+
         GLCall(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr));
+
 
         glfwSwapBuffers(window);
 
