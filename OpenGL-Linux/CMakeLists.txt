@@ -4,7 +4,7 @@ set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 
-add_executable(application application.cpp)
+add_executable(application application.cpp renderer.cpp renderer.hpp)
 
 add_subdirectory(include/glfw-3.3.2)
 target_link_libraries(application glfw)
